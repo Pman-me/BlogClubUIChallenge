@@ -17,7 +17,7 @@ Technologies that are used in this projects are:
         <th style="text-align:center">Splash Screen</th>
         <th style="text-align:center">OnBoarding Screen</th>
         <th style="text-align:center">Auth Screen | Log in</th>
-        <th style="text-align:center">Auth Screen | Sign in</th>
+        <th style="text-align:center">Auth Screen | Sign up</th>
     </tr>
     <tr>
         <td><img src="./screenshot/splash_screen.png" alt="" width="200"></td>
