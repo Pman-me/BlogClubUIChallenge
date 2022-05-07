@@ -22,7 +22,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ProfilePostsButtonClicked>(_onPostsButtonClicked);
     on<ProfileFollowingButtonClicked>(_onFollowingButtonClicked);
     on<ProfileFollowersButtonClicked>(_onFollowersButtonClicked);
-    on<ProfileNavigateToBack>(_onNavigateToBack);
   }
 
   _onStarted(ProfileStarted event, Emitter<ProfileState> emit) async {
@@ -69,7 +68,5 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     emit((state as ProfileSuccess).copyWith(isScrolled: event.isScrolled));
   }
 
-   _onNavigateToBack(ProfileNavigateToBack event, Emitter<ProfileState> emit) {
-    GoRouter.of(event.context).pop();
-  }
+
 }

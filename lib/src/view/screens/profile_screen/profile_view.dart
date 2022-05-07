@@ -59,6 +59,7 @@ class ProfileView extends StatelessWidget {
                   toolbarHeight: _kToolbarHeight,
                   elevation: 0,
                   backgroundColor: lightTheme.colorScheme.background,
+                  automaticallyImplyLeading: false,
                   title: Padding(
                     padding: const EdgeInsetsDirectional.only(start: 16),
                     child: Text(
@@ -70,11 +71,7 @@ class ProfileView extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsetsDirectional.only(end: 16),
                       child: IconButton(
-                        onPressed: () {
-                          context
-                              .read<ProfileBloc>()
-                              .add(ProfileNavigateToBack(context: context));
-                        },
+                        onPressed: () {},
                         icon: const Icon(Icons.more_horiz_outlined),
                       ),
                     ),
@@ -217,6 +214,7 @@ class ProfileView extends StatelessWidget {
           backgroundColor: state.isScrolled
               ? lightTheme.colorScheme.background
               : lightTheme.colorScheme.background,
+          automaticallyImplyLeading: false,
           title: Padding(
             padding: const EdgeInsetsDirectional.only(start: 16),
             child: Text(
@@ -226,12 +224,9 @@ class ProfileView extends StatelessWidget {
           ),
           actions: [
             Padding(
-              padding: const EdgeInsetsDirectional.only(end: 16),
+              padding: const EdgeInsetsDirectional.only(end: 20),
               child: IconButton(
                 onPressed: () {
-                  context
-                      .read<ProfileBloc>()
-                      .add(ProfileNavigateToBack(context: context));
                 },
                 icon: const Icon(Icons.more_horiz_outlined),
               ),
