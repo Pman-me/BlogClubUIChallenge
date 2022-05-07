@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<color name="gradiantStartColor">#ff254392</color>
+
+<color name="gradiantMiddleColor">#ff49B0E2</color>
+
+<color name="gradiantEndColor">#ff9CECFB</color>
+
+<color name="largePostGradiantStartColor">#ff0D253c</color>
+
+<color name="dotColor">#ff7B8BB2</color>
+
+<color name="primary_textColor">#ff0D253C</color>
+
+<color name="secondaryText-color">#ff2D4379</color>
+
+<color name="captionTextColor">#ff7888B2</color>
+
+<color name="categoryItemBoxShadowColor">#ff0D253c</color>
+
+<color name="postItemBoxShadowColor">#1a5282FF</color>
+
+<color name="bottomNavBoxShadowColor">#ff9b8487</color>
+
+<color name="primaryColor">#ff376AED</color>
+
+<color name="darkPrimaryColor">#ff2151CD</color>
+
+<color name="white">#FFFFFFFF</color>
+
+<color name="black">#FF000000</color>
+
+<color name="background">#ffFBFCFF</color>
+
+</resources>
