@@ -1,13 +1,16 @@
 ## Blog Club | Flutter UI Challenge
 
 
+Create navigation like Instagram app navigation
+Increase performance and reduce memory consumption when scrolling between pages.
+
 Technologies
 
 Technologies that are used in this projects are:
 
     Flutter
-    Go Router
     Flutter Bloc
+
 
 
 ## Screenshot
