@@ -21,7 +21,7 @@ class ProfileView extends StatelessWidget{
     var _innerFrameHeight = MediaQuery.of(context).size.height * 0.35;
 
     return BlocProvider(
-      create: (context) => ProfileBloc(AppDatasource())..add(ProfileStarted()),
+      create: (context) => ProfileBloc(appDatasource: RepositoryProvider.of<AppDatasource>(context))..add(ProfileStarted()),
       child: Scaffold(
         backgroundColor: lightTheme.colorScheme.background,
         body: BlocBuilder<ProfileBloc, ProfileState>(

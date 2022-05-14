@@ -1,5 +1,3 @@
-import 'package:blog_club/gen/assets.gen.dart';
-import 'package:blog_club/gen/colors.gen.dart';
 import 'package:blog_club/src/bloc/main_bloc/main_bloc.dart';
 import 'package:blog_club/src/bloc/main_bloc/main_event.dart';
 import 'package:blog_club/src/bloc/main_bloc/main_state.dart';

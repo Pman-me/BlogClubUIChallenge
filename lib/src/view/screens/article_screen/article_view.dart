@@ -18,7 +18,7 @@ class ArticleView extends StatelessWidget {
     _size = MediaQuery.of(context).size;
     return BlocProvider(
       create: (context) =>
-          ArticleBloc(appDataSource: AppDatasource())..add(ArticleStarted()),
+          ArticleBloc(appDataSource: RepositoryProvider.of<AppDatasource>(context))..add(ArticleStarted()),
       child: Scaffold(
         backgroundColor: lightTheme.colorScheme.surface,
         body: BlocBuilder<ArticleBloc, ArticleState>(builder: (context, state) {

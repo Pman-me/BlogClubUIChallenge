@@ -19,7 +19,7 @@ class OnBoardingView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          OnBoardingBloc(appDatasource: AppDatasource())..add(OnBoardingStarted()),
+          OnBoardingBloc(appDatasource: RepositoryProvider.of<AppDatasource>(context))..add(OnBoardingStarted()),
       child: Scaffold(
         backgroundColor: lightTheme.colorScheme.background,
         body: _onBoardingBody(context),

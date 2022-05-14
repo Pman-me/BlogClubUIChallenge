@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:blog_club/src/configs/app_routes.dart';
 import 'package:blog_club/src/data/local/data_source/app_data_source.dart';
 import 'package:blog_club/src/data/model/profile_model.dart';
 import 'package:blog_club/src/view/screens/article_screen/article_view.dart';
@@ -15,7 +14,7 @@ part 'profile_state.dart';
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   late AppDatasource _appDatasource;
 
-  ProfileBloc(AppDatasource appDatasource)
+  ProfileBloc({required AppDatasource appDatasource})
       : super(ProfileLoading()) {
     _appDatasource = appDatasource;
     on<ProfileStarted>(_onStarted);

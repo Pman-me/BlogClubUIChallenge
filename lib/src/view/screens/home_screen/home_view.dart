@@ -25,7 +25,7 @@ class HomeView extends StatelessWidget {
     return Scaffold(
       body: BlocProvider(
         create: (context) =>
-            HomeBloc(appDatasource: AppDatasource())..add(HomeStarted()),
+            HomeBloc(appDatasource: RepositoryProvider.of<AppDatasource>(context))..add(HomeStarted()),
         child: _homeBody(),
       ),
     );
