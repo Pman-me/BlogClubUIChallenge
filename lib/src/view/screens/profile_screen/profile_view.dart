@@ -10,14 +10,15 @@ import 'package:blog_club/src/view/components/user_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ProfileView extends StatelessWidget {
+class ProfileView extends StatelessWidget{
   late ScrollController _scrollController;
   final double _kToolbarHeight = 56;
 
+
   @override
   Widget build(BuildContext context) {
-    var _outerContainerHeight = MediaQuery.of(context).size.height * 0.45;
-    var _innerContainerHeight = MediaQuery.of(context).size.height * 0.35;
+    var _outerFrameHeight = MediaQuery.of(context).size.height * 0.45;
+    var _innerFrameHeight = MediaQuery.of(context).size.height * 0.35;
 
     return BlocProvider(
       create: (context) => ProfileBloc(AppDatasource())..add(ProfileStarted()),
@@ -27,7 +28,7 @@ class ProfileView extends StatelessWidget {
           builder: (context, state) {
             var result;
             if (state is ProfileLoading) {
-              result = _loadingStateView(context, _innerContainerHeight);
+              result = _loadingStateView(context, _innerFrameHeight);
             }
             if (state is ProfileSuccess) {
               _scrollController = ScrollController();
@@ -39,8 +40,7 @@ class ProfileView extends StatelessWidget {
                     .add(ProfileScrolled(isScrolled: _isScrolled));
               });
 
-              result = _successStateView(
-                  _outerContainerHeight, _innerContainerHeight, state, context);
+              result = _successStateView(context,_innerFrameHeight,_outerFrameHeight,state);
             }
             return result;
           },
@@ -49,7 +49,7 @@ class ProfileView extends StatelessWidget {
     );
   }
 
-  Widget _loadingStateView(BuildContext context, double _innerContainerHeight) {
+  Widget _loadingStateView(BuildContext context, double innerFrameHeight) {
     return CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: [
@@ -83,7 +83,7 @@ class ProfileView extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(32),
                         margin: const EdgeInsets.fromLTRB(32, 16, 32, 0),
-                        height: _innerContainerHeight,
+                        height: innerFrameHeight,
                         decoration: BoxDecoration(
                           color: lightTheme.colorScheme.surface,
                           borderRadius: BorderRadius.circular(16),
@@ -197,11 +197,7 @@ class ProfileView extends StatelessWidget {
             );
   }
 
-  Widget _successStateView(
-      double _outerContainerHeight,
-      double _innerContainerHeight,
-      ProfileSuccess state,
-      BuildContext context) {
+  Widget _successStateView(BuildContext context, double innerFrameHeight,double outerFrameHeight,ProfileSuccess state) {
     return CustomScrollView(
       controller: _scrollController,
       physics: const BouncingScrollPhysics(),
@@ -240,42 +236,141 @@ class ProfileView extends StatelessWidget {
                 height: 8,
               ),
               SizedBox(
-                height: _outerContainerHeight,
+                height: outerFrameHeight,
                 width: double.maxFinite,
                 child: Stack(
                   children: [
-                    Positioned.fill(
-                        bottom: 18,
-                        top: 32,
-                        left: 96,
-                        right: 96,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(24),
-                            boxShadow: [
-                              BoxShadow(
-                                  blurRadius: 20,
+                    _customShadow(),
+                    _profilePrimaryFrame(innerFrameHeight, state),
+                    _profileSecondFrame(outerFrameHeight, innerFrameHeight, state, context),
+                  ],
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: lightTheme.colorScheme.surface,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(32),
+                    topRight: Radius.circular(32),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                        blurRadius: 20,
+                        color: lightTheme.colorScheme.onBackground
+                            .withOpacity(0.01))
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(32, 32, 32, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'My Posts',
+                            style: lightTheme.textTheme.headline6,
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                onPressed: () {},
+                                icon: Assets.img.icons.grid.svg(
                                   color: lightTheme.colorScheme.onBackground
-                                      .withOpacity(0.3))
+                                      .withOpacity(0.4),
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {},
+                                icon: Assets.img.icons.table
+                                    .svg(color: lightTheme.colorScheme.primary),
+                              ),
                             ],
                           ),
-                        )),
-                    Positioned(
-                      child: Container(
-                        padding: const EdgeInsets.all(32),
-                        margin: const EdgeInsets.fromLTRB(32, 16, 32, 0),
-                        height: _innerContainerHeight,
-                        decoration: BoxDecoration(
-                          color: lightTheme.colorScheme.surface,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              blurRadius: 20,
-                              color: lightTheme.colorScheme.onBackground
-                                  .withOpacity(0.1),
-                            ),
-                          ],
-                        ),
+                        ],
+                      ),
+                    ),
+                    PostListComponent(
+                      posts: state.profileModel.posts,
+                      itemExtent: 150,
+                      physics: const NeverScrollableScrollPhysics(),
+                      voidCallback: () =>
+                          context.read<ProfileBloc>().add(ProfileNavigateTo(context: context)),
+                    ),
+                    const SizedBox(height: 24,),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _profileSecondFrame(double _outerContainerHeight, double _innerContainerHeight, ProfileSuccess state, BuildContext context) {
+    return Positioned(
+                    bottom:
+                        (_outerContainerHeight - _innerContainerHeight) / 2,
+                    right: 64,
+                    left: 64,
+                    child: Container(
+                      height: 68,
+                      decoration: BoxDecoration(
+                        color: lightTheme.colorScheme.primary,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          _userInfoItem(
+                            title: 'Posts',
+                            count: state.profileModel.posts.length.toString(),
+                            isClicked: state.isPostsClicked,
+                            onTap: () => context
+                                .read<ProfileBloc>()
+                                .add(ProfilePostsButtonClicked()),
+                          ),
+                          _userInfoItem(
+                            title: 'Following',
+                            count: state.profileModel.following,
+                            isClicked: state.isFollowingClicked,
+                            onTap: () => context
+                                .read<ProfileBloc>()
+                                .add(ProfileFollowingButtonClicked()),
+                          ),
+                          _userInfoItem(
+                            title: 'Followers',
+                            count: state.profileModel.followers,
+                            isClicked: state.isFollowersClicked,
+                            onTap: () => context
+                                .read<ProfileBloc>()
+                                .add(ProfileFollowersButtonClicked()),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+  }
+
+  Widget _profilePrimaryFrame(double _innerContainerHeight, ProfileSuccess state) {
+    return Positioned(
+                    child: Container(
+                      padding: const EdgeInsets.all(32),
+                      margin: const EdgeInsets.fromLTRB(32, 16, 32, 0),
+                      height: _innerContainerHeight,
+                      decoration: BoxDecoration(
+                        color: lightTheme.colorScheme.surface,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 20,
+                            color: lightTheme.colorScheme.onBackground
+                                .withOpacity(0.1),
+                          ),
+                        ],
+                      ),
+                      child: Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -339,111 +434,26 @@ class ProfileView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Positioned(
-                      bottom:
-                          (_outerContainerHeight - _innerContainerHeight) / 2,
-                      right: 64,
-                      left: 64,
+                  );
+  }
+
+  Widget _customShadow() {
+    return Positioned.fill(
+                      bottom: 18,
+                      top: 32,
+                      left: 96,
+                      right: 96,
                       child: Container(
-                        height: 68,
                         decoration: BoxDecoration(
-                          color: lightTheme.colorScheme.primary,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            _userInfoItem(
-                              title: 'Posts',
-                              count: state.profileModel.posts.length.toString(),
-                              isClicked: state.isPostsClicked,
-                              onTap: () => context
-                                  .read<ProfileBloc>()
-                                  .add(ProfilePostsButtonClicked()),
-                            ),
-                            _userInfoItem(
-                              title: 'Following',
-                              count: state.profileModel.following,
-                              isClicked: state.isFollowingClicked,
-                              onTap: () => context
-                                  .read<ProfileBloc>()
-                                  .add(ProfileFollowingButtonClicked()),
-                            ),
-                            _userInfoItem(
-                              title: 'Followers',
-                              count: state.profileModel.followers,
-                              isClicked: state.isFollowersClicked,
-                              onTap: () => context
-                                  .read<ProfileBloc>()
-                                  .add(ProfileFollowersButtonClicked()),
-                            ),
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: [
+                            BoxShadow(
+                                blurRadius: 20,
+                                color: lightTheme.colorScheme.onBackground
+                                    .withOpacity(0.3))
                           ],
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: lightTheme.colorScheme.surface,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(32),
-                    topRight: Radius.circular(32),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                        blurRadius: 20,
-                        color: lightTheme.colorScheme.onBackground
-                            .withOpacity(0.01))
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(32, 32, 32, 0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'My Posts',
-                            style: lightTheme.textTheme.headline6,
-                          ),
-                          Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {},
-                                icon: Assets.img.icons.grid.svg(
-                                  color: lightTheme.colorScheme.onBackground
-                                      .withOpacity(0.4),
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: () {},
-                                icon: Assets.img.icons.table
-                                    .svg(color: lightTheme.colorScheme.primary),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    PostListComponent(
-                      posts: state.profileModel.posts,
-                      itemExtent: 150,
-                      physics: const NeverScrollableScrollPhysics(),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 24,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+                      ));
   }
 
   Widget _userInfoItem(
@@ -485,3 +495,4 @@ class ProfileView extends StatelessWidget {
         ));
   }
 }
+

@@ -7,8 +7,9 @@ import 'package:blog_club/src/data/local/data_source/app_data_source.dart';
 import 'package:blog_club/src/data/model/category_model.dart';
 import 'package:blog_club/src/data/model/post_model.dart';
 import 'package:blog_club/src/data/model/story_model.dart';
+import 'package:blog_club/src/view/screens/article_screen/article_view.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   late final List<PostModel> _posts;
@@ -17,15 +18,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   late final List<CategoryModel> _categories;
 
-  late AppDatasource _appDatasource;
+  late final AppDatasource _appDatasource;
 
   HomeBloc({required AppDatasource appDatasource})
       : _appDatasource = appDatasource,
         super(HomeState()) {
     on<HomeStarted>(_onStarted);
     on<HomeSliderPageChange>(_onSliderPageChanged);
-    on<HomeNavigateToArticle>(_onNavigateToArticle);
-    on<HomeNavigateToProfile>(_onNavigateToProfile);
+    on<HomeNavigateTo>(_onNavigateTo);
   }
 
   _onSliderPageChanged(HomeSliderPageChange event, Emitter<HomeState> emit) {
@@ -48,12 +48,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         categories: _categories));
   }
 
-  _onNavigateToArticle(HomeNavigateToArticle event, Emitter<HomeState> emit) {
-    GoRouter.of(event.context).pushNamed(AppRoutes.kArticleScreenRoute);
-  }
-
-  _onNavigateToProfile(HomeNavigateToProfile event, Emitter<HomeState> emit) {
-    GoRouter.of(event.context).pushNamed(AppRoutes.kProfileScreenRoute
-    );
+  _onNavigateTo(HomeNavigateTo event, Emitter<HomeState> emit) {
+    Navigator.of(event.context).push(MaterialPageRoute(builder: (settings)=>ArticleView()));
   }
 }

@@ -1,11 +1,12 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:blog_club/src/configs/app_routes.dart';
 import 'package:blog_club/src/data/local/data_source/app_data_source.dart';
 import 'package:blog_club/src/data/model/profile_model.dart';
+import 'package:blog_club/src/view/screens/article_screen/article_view.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 part 'profile_event.dart';
 
@@ -22,6 +23,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ProfilePostsButtonClicked>(_onPostsButtonClicked);
     on<ProfileFollowingButtonClicked>(_onFollowingButtonClicked);
     on<ProfileFollowersButtonClicked>(_onFollowersButtonClicked);
+    on<ProfileNavigateTo>(_onNavigateTo);
   }
 
   _onStarted(ProfileStarted event, Emitter<ProfileState> emit) async {
@@ -69,4 +71,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
 
+
+  _onNavigateTo(ProfileNavigateTo event, Emitter<ProfileState> emit) {
+    Navigator.of(event.context).push(MaterialPageRoute(builder: (settings)=>ArticleView()));
+  }
 }

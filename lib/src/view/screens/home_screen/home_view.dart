@@ -1,4 +1,3 @@
-import 'package:blog_club/gen/assets.gen.dart';
 import 'package:blog_club/gen/colors.gen.dart';
 import 'package:blog_club/src/bloc/home_bloc/home_bloc.dart';
 import 'package:blog_club/src/bloc/home_bloc/home_event.dart';
@@ -33,60 +32,53 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _homeBody() {
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: SafeArea(
-            child: CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      _appbar(),
-                      Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32),
-                          child: Text(
-                            'Explore today\'s',
-                            style: lightTheme.textTheme.headline4,
-                          )),
-                      const SizedBox(
-                        height: 16,
+    return SafeArea(
+      child: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                _appbar(),
+                Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Text(
+                      'Explore today\'s',
+                      style: lightTheme.textTheme.headline4,
+                    )),
+                const SizedBox(
+                  height: 16,
+                ),
+                _StoryList(),
+                _CategoryList(),
+                Padding(
+                  padding: const EdgeInsets.only(left: 32, right: 24),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Latest News',
+                        style: lightTheme.textTheme.headline5,
                       ),
-                      _StoryList(),
-                      _CategoryList(),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 32, right: 24),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Latest News',
-                              style: lightTheme.textTheme.headline5,
-                            ),
-                            TextButton(
-                              onPressed: () {},
-                              child: Text(
-                                'More',
-                                style: TextStyle(color: ColorName.primaryColor),
-                              ),
-                            ),
-                          ],
+                      TextButton(
+                        onPressed: () {},
+                        child: const Text(
+                          'More',
+                          style: TextStyle(color: ColorName.primaryColor),
                         ),
-                      ),
-                      _PostList(),
-                      const SizedBox(
-                        height: 85,
                       ),
                     ],
                   ),
+                ),
+                _PostList(),
+                const SizedBox(
+                  height: 16,
                 )
               ],
             ),
-          ),
-        ),
-        homeBottomNavigation(),
-      ],
+          )
+        ],
+      ),
     );
   }
 
@@ -109,112 +101,6 @@ class HomeView extends StatelessWidget {
       ),
     );
   }
-}
-
-Widget homeBottomNavigation() {
-  return BlocBuilder<HomeBloc,HomeState>(
-    builder: (context, state) {
-      return Positioned(
-          bottom: 0,
-          right: 0,
-          left: 0,
-          child: Container(
-            width: double.infinity,
-            height: 85,
-            decoration: const BoxDecoration(color: Colors.transparent),
-            child: Stack(
-              children: [
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    width: double.infinity,
-                    height: 65,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          blurRadius: 20,
-                          color: ColorName.bottomNavBoxShadowColor.withOpacity(0.3),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _bottomNavigationItem(
-                            iconFileName: Assets.img.icons.home.path,
-                            activeIconFileName: Assets.img.icons.home.path,
-                            label: 'Home'),
-                        _bottomNavigationItem(
-                            iconFileName: Assets.img.icons.articles.path,
-                            activeIconFileName: Assets.img.icons.articles.path,
-                            label: 'Articles',
-                            onTap: () => context
-                                .read<HomeBloc>()
-                                .add(HomeNavigateToArticle(context: context))),
-                        _bottomNavigationItem(
-                            iconFileName: Assets.img.icons.search.path,
-                            activeIconFileName: Assets.img.icons.search.path,
-                            label: 'Search'),
-                        _bottomNavigationItem(
-                            iconFileName: Assets.img.icons.menu.path,
-                            activeIconFileName: Assets.img.icons.menu.path,
-                            label: 'Menu',
-                            onTap: () => context
-                                .read<HomeBloc>()
-                                .add(HomeNavigateToProfile(context: context))),
-                      ],
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Container(
-                    width: 56,
-                    height: 56,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                    ),
-                    padding: const EdgeInsets.all(4),
-                    child: Container(
-                      decoration: const BoxDecoration(
-                          shape: BoxShape.circle, color: ColorName.primaryColor),
-                      child: const Icon(
-                        Icons.add,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ));
-    });
-}
-
-Widget _bottomNavigationItem(
-    {required String iconFileName,
-    required String activeIconFileName,
-    required String label,
-    VoidCallback? onTap}) {
-  return InkWell(
-    onTap: onTap,
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Image.asset(
-          iconFileName,
-          width: 24,
-          height: 24,
-        ),
-        Text(
-          label,
-          style: lightTheme.textTheme.caption,
-        ),
-      ],
-    ),
-  );
 }
 
 class _StoryList extends StatelessWidget {
@@ -485,16 +371,14 @@ class _PostList extends StatelessWidget {
         result = PostListLoadingStateView();
       }
       if (state.status == HomeStatus.success) {
-        result = _postListSuccessStateView(state);
+        result = PostListComponent(
+          posts: state.posts,
+          itemExtent: 150,
+          voidCallback: () =>
+              context.read<HomeBloc>().add(HomeNavigateTo(context: context)),
+        );
       }
       return result;
     });
-  }
-
-  Widget _postListSuccessStateView(HomeState state) {
-    return PostListComponent(
-        posts: state.posts,
-        itemExtent: 150,
-      );
   }
 }

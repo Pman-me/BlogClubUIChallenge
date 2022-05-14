@@ -9,11 +9,11 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: lightTheme,
-      routerDelegate: AppRoutes.router.routerDelegate,
-      routeInformationParser: AppRoutes.router.routeInformationParser,
+      initialRoute: AppRoutes.kSplashRoute,
+      onGenerateRoute: AppRoutes.generateRoute,
     );
   }
 }

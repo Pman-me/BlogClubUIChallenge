@@ -34,4 +34,12 @@ class ProfileFollowersButtonClicked extends ProfileEvent {
   List<Object> get props=> [];
 }
 
+class ProfileNavigateTo extends ProfileEvent{
+  var context;
+  ProfileNavigateTo({required this.context});
+
+  @override
+  List<Object?> get props => [];
+}
+
 

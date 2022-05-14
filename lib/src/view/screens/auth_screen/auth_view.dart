@@ -23,6 +23,7 @@ class _AuthViewState extends State<AuthView> {
   late final TextEditingController _passwordController;
   late final TextEditingController _fullnameController;
   late final FocusNode _usernameFocus;
+  late final FocusNode _passwordFocus;
   late final FocusNode _fullnameFocus;
 
   @override
@@ -31,6 +32,7 @@ class _AuthViewState extends State<AuthView> {
     _passwordController = TextEditingController();
     _fullnameController = TextEditingController();
     _usernameFocus = FocusNode();
+    _passwordFocus = FocusNode();
     _fullnameFocus = FocusNode();
 
     super.initState();
@@ -51,12 +53,7 @@ class _AuthViewState extends State<AuthView> {
     return SafeArea(
       child: Column(
         children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.2,
-            child: SvgPicture.asset(
-              Assets.img.icons.logo.path,
-            ),
-          ),
+          _logoWidget(context),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -87,6 +84,7 @@ class _AuthViewState extends State<AuthView> {
                         child: Padding(
                           padding: const EdgeInsets.all(32),
                           child: SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
                             child: Form(
                               key: context.read<AuthBloc>().formKey,
                               child: state.authMode == AuthMode.login
@@ -105,6 +103,15 @@ class _AuthViewState extends State<AuthView> {
         ],
       ),
     );
+  }
+
+  Widget _logoWidget(BuildContext context) {
+    return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.2,
+          child: SvgPicture.asset(
+            Assets.img.icons.logo.path,
+          ),
+        );
   }
 
   Widget _authModesButtons(BuildContext context, AuthState state) {
@@ -176,7 +183,7 @@ class _AuthViewState extends State<AuthView> {
             label: Text('Fullname'),
           ),
         ),
-        _usernameTextField(),
+        _usernameTextField(context),
         const SizedBox(
           height: 8,
         ),
@@ -227,7 +234,7 @@ class _AuthViewState extends State<AuthView> {
         const SizedBox(
           height: 16,
         ),
-        _usernameTextField(),
+        _usernameTextField(context),
         const SizedBox(
           height: 8,
         ),
@@ -311,13 +318,21 @@ class _AuthViewState extends State<AuthView> {
     );
   }
 
-  Widget _usernameTextField() {
+  Widget _usernameTextField(BuildContext context) {
     return TextFormField(
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: emailValidator,
       focusNode: _usernameFocus,
       keyboardType:TextInputType.emailAddress,
       controller: _userNameController,
+      onEditingComplete: () {
+        _usernameFocus.unfocus();
+        FocusScope.of(context).requestFocus(_passwordFocus);
+      },
+      onFieldSubmitted: (term) {
+        _usernameFocus.unfocus();
+        FocusScope.of(context).requestFocus(_passwordFocus);
+      },
       decoration: const InputDecoration(
         label: Text('Username'),
       ),

@@ -21,18 +21,8 @@ class HomeSliderPageChange extends HomeEvent {
   List<Object> get props => [_currentIndex];
 }
 
-class HomeNavigateToArticle extends HomeEvent {
-  BuildContext _context;
-
-  BuildContext get context => _context;
-
-  HomeNavigateToArticle({required BuildContext context}) : _context = context;
+class HomeNavigateTo extends HomeEvent{
+  var context;
+  HomeNavigateTo({required this.context});
 }
 
-class HomeNavigateToProfile extends HomeEvent {
-  BuildContext _context;
-
-  BuildContext get context => _context;
-
-  HomeNavigateToProfile({required BuildContext context}) : _context = context;
-}

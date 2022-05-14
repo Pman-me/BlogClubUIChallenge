@@ -33,7 +33,7 @@ class OnBoardingView extends StatelessWidget {
         children: [
           _backgroundImage(),
           Container(
-            height: MediaQuery.of(context).size.height * 0.35,
+            height: MediaQuery.of(context).size.height * 0.4,
             decoration: BoxDecoration(
                 color: lightTheme.colorScheme.surface,
                 borderRadius: const BorderRadius.only(
