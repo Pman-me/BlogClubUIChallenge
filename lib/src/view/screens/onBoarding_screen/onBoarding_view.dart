@@ -3,7 +3,6 @@ import 'package:blog_club/src/bloc/onBoarding_bloc/onBoarding_bloc.dart';
 import 'package:blog_club/src/bloc/onBoarding_bloc/onBoarding_event.dart';
 import 'package:blog_club/src/bloc/onBoarding_bloc/onBoarding_state.dart';
 import 'package:blog_club/src/configs/app_theme.dart';
-import 'package:blog_club/src/data/local/data_source/app_data_source.dart';
 import 'package:blog_club/src/view/components/button_component.dart';
 import 'package:blog_club/src/view/components/image_component.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +18,7 @@ class OnBoardingView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          OnBoardingBloc(appDatasource: RepositoryProvider.of<AppDatasource>(context))..add(OnBoardingStarted()),
+      RepositoryProvider.of<OnBoardingBloc>(context)..add(OnBoardingStarted()),
       child: Scaffold(
         backgroundColor: lightTheme.colorScheme.background,
         body: _onBoardingBody(context),

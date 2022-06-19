@@ -1,13 +1,11 @@
 import 'package:blog_club/gen/colors.gen.dart';
-import 'package:blog_club/src/bloc/home_bloc/home_bloc.dart';
 import 'package:blog_club/src/configs/app_theme.dart';
 import 'package:blog_club/src/data/model/post_model.dart';
 import 'package:blog_club/src/view/components/image_component.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-class PostListComponent<T> extends StatelessWidget{
+class PostListComponent extends StatelessWidget{
 
 
   late List<PostModel> _posts;
@@ -34,17 +32,18 @@ class PostListComponent<T> extends StatelessWidget{
           physics: _physics ?? const ClampingScrollPhysics(),
           itemBuilder: (context, index) {
             var post = _posts[index];
-            return InkWell(
-              onTap: _voidCallback,
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: Colors.white,
-                    boxShadow: const [
-                      BoxShadow(
-                          blurRadius: 8, color: ColorName.postItemBoxShadowColor)
-                    ]),
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.white,
+                  boxShadow: const [
+                    BoxShadow(
+                        blurRadius: 8, color: ColorName.postItemBoxShadowColor)
+                  ]),
+              child: InkWell(
+                onTap: _voidCallback,
+                borderRadius: BorderRadius.circular(16),
                 child: Row(
                   children: [
                     ImageComponent(

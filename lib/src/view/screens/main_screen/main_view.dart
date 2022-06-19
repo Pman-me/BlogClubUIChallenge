@@ -1,81 +1,97 @@
-import 'package:blog_club/src/bloc/main_bloc/main_bloc.dart';
-import 'package:blog_club/src/bloc/main_bloc/main_event.dart';
-import 'package:blog_club/src/bloc/main_bloc/main_state.dart';
+import 'package:blog_club/gen/assets.gen.dart';
+import 'package:blog_club/gen/colors.gen.dart';
 import 'package:blog_club/src/configs/app_routes.dart';
+import 'package:blog_club/src/configs/app_theme.dart';
 
 import 'package:blog_club/src/core/constants/general_constants.dart';
-import 'package:blog_club/src/view/screens/main_screen/widgets/main_screen_bottom_navigation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-class MainView extends StatelessWidget {
-  late MainBloc _mainBloc;
+class MainView extends StatefulWidget {
+  @override
+  State<MainView> createState() => _MainViewState();
+}
+
+class _MainViewState extends State<MainView> {
+  final int _homeScreenIndex = 0;
+  final int _articleScreenIndex = 1;
+  final int _searchScreenIndex = 2;
+  final int _profileScreenIndex = 3;
+  late int _currentScreenIndex = _homeScreenIndex;
+
+  final GlobalKey<NavigatorState> _homeScreenNavigatorKey = GlobalKey();
+  final GlobalKey<NavigatorState> _articleScreenNavigatorKey = GlobalKey();
+  final GlobalKey<NavigatorState> _searchScreenNavigatorKey = GlobalKey();
+  final GlobalKey<NavigatorState> _profileScreenNavigatorKey = GlobalKey();
+
+  late final indexToKeyMap = {
+    _homeScreenIndex: _homeScreenNavigatorKey,
+    _articleScreenIndex: _articleScreenNavigatorKey,
+    _searchScreenIndex: _searchScreenNavigatorKey,
+    _profileScreenIndex: _profileScreenNavigatorKey
+  };
+
+  final Set<int> _screensHistory = {};
 
   Future<bool> _onWillPop() async {
-    var currentNavigatorState = _mainBloc
-        .state.indexToKeyMap[_mainBloc.state.currentScreenIndex]!.currentState;
+    var currentNavigatorState =
+        indexToKeyMap[_currentScreenIndex]!.currentState;
     if (currentNavigatorState!.canPop()) {
       currentNavigatorState.pop();
       return false;
     }
-    if (_mainBloc.state.screensHistory.isNotEmpty) {
-      _mainBloc.add(
-          MainBackTo(currentScreenIndex: _mainBloc.state.screensHistory.last));
+    else if (_screensHistory.isNotEmpty) {
+      setState(() {
+        _currentScreenIndex = _screensHistory.last;
+        _screensHistory.remove(_screensHistory.last);
+      });
       return false;
+    } else {
+      return true;
     }
-    return true;
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => MainBloc(),
-      child: BlocBuilder<MainBloc, MainState>(
-        builder: (context, state) {
-          _mainBloc = context.read<MainBloc>();
-          return WillPopScope(
-            onWillPop: _onWillPop,
-            child: Scaffold(
-              body: Stack(
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Positioned.fill(
+              bottom: kBottomNavigationHeight,
+              child: IndexedStack(
+                index: _currentScreenIndex,
                 children: [
-                  Positioned.fill(
-                    bottom: kBottomNavigationHeight,
-                    child: IndexedStack(
-                      index: state.currentScreenIndex,
-                      children: [
-                        _navigator(
-                            key: state.homeScreenNavigatorKey,
-                            routeName: AppRoutes.kHomeScreenRoute,
-                            screenIndex: state.homeScreenIndex,
-                            currentIndex: state.currentScreenIndex),
-                        _navigator(
-                            key: state.articleScreenNavigatorKey,
-                            routeName: AppRoutes.kArticleScreenRoute,
-                            screenIndex: state.articleScreenIndex,
-                            currentIndex: state.currentScreenIndex),
-                        _navigator(
-                            key: state.searchScreenNavigatorKey,
-                            routeName: AppRoutes.kSearchScreenRoute,
-                            screenIndex: state.searchScreenIndex,
-                            currentIndex: state.currentScreenIndex),
-                        _navigator(
-                            key: state.profileScreenNavigatorKey,
-                            routeName: AppRoutes.kProfileScreenRoute,
-                            screenIndex: state.profileScreenIndex,
-                            currentIndex: state.currentScreenIndex),
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                      bottom: 0,
-                      right: 0,
-                      left: 0,
-                      child: MainScreenBottomNavigation())
+                  _navigator(
+                      key: _homeScreenNavigatorKey,
+                      routeName: AppRoutes.kHomeScreenRoute,
+                      screenIndex: _homeScreenIndex,
+                      currentIndex: _currentScreenIndex),
+                  _navigator(
+                      key: _articleScreenNavigatorKey,
+                      routeName: AppRoutes.kArticleScreenRoute,
+                      screenIndex: _articleScreenIndex,
+                      currentIndex: _currentScreenIndex),
+                  _navigator(
+                      key: _searchScreenNavigatorKey,
+                      routeName: AppRoutes.kSearchScreenRoute,
+                      screenIndex: _searchScreenIndex,
+                      currentIndex: _currentScreenIndex),
+                  _navigator(
+                      key: _profileScreenNavigatorKey,
+                      routeName: AppRoutes.kProfileScreenRoute,
+                      screenIndex: _profileScreenIndex,
+                      currentIndex: _currentScreenIndex),
                 ],
               ),
             ),
-          );
-        },
+            Positioned(
+                bottom: 0,
+                right: 0,
+                left: 0,
+                child: _mainScreenBottomNavigation())
+          ],
+        ),
       ),
     );
   }
@@ -85,12 +101,139 @@ class MainView extends StatelessWidget {
       required String routeName,
       required int screenIndex,
       required int currentIndex}) {
-    return key.currentState ==null && screenIndex != currentIndex ? Container() :Navigator(
-      key: key,
-      onGenerateRoute: (settings) => AppRoutes.generateRoute(settings.copyWith(
-        name: routeName,
-        arguments: {'offStage': screenIndex != currentIndex},
-      )),
+    return key.currentState == null && screenIndex != currentIndex
+        ? Container()
+        : Navigator(
+            key: key,
+            onGenerateRoute: (settings) =>
+                AppRoutes.generateRoute(settings.copyWith(
+              name: routeName,
+              arguments: {'offStage': screenIndex != currentIndex,'callback':_onWillPop},
+            )),
+          );
+  }
+
+  Widget _mainScreenBottomNavigation() {
+    return Container(
+      width: double.infinity,
+      height: 85,
+      decoration: const BoxDecoration(color: Colors.transparent),
+      child: Stack(
+        children: [
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              width: double.infinity,
+              height: kBottomNavigationHeight,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 20,
+                    color: ColorName.bottomNavBoxShadowColor.withOpacity(0.3),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _bottomNavigationItem(
+                    iconFileName: Assets.img.icons.home.path,
+                    activeIconFileName: Assets.img.icons.home.path,
+                    label: 'Home',
+                    isCurrentItem: _currentScreenIndex == _homeScreenIndex,
+                    selectedScreenIndex: _homeScreenIndex,
+                  ),
+                  _bottomNavigationItem(
+                    iconFileName: Assets.img.icons.articles.path,
+                    activeIconFileName: Assets.img.icons.articles.path,
+                    label: 'Articles',
+                    isCurrentItem: _currentScreenIndex == _articleScreenIndex,
+                    selectedScreenIndex: _articleScreenIndex,
+                  ),
+                  const Expanded(
+                    child: SizedBox(
+                      width: 8,
+                    ),
+                  ),
+                  _bottomNavigationItem(
+                    iconFileName: Assets.img.icons.search.path,
+                    activeIconFileName: Assets.img.icons.search.path,
+                    label: 'Search',
+                    isCurrentItem: _currentScreenIndex == _searchScreenIndex,
+                    selectedScreenIndex: _searchScreenIndex,
+                  ),
+                  _bottomNavigationItem(
+                    iconFileName: Assets.img.icons.menu.path,
+                    activeIconFileName: Assets.img.icons.menu.path,
+                    label: 'Menu',
+                    isCurrentItem: _currentScreenIndex == _profileScreenIndex,
+                    selectedScreenIndex: _profileScreenIndex,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              width: 56,
+              height: 56,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+              ),
+              padding: const EdgeInsets.all(4),
+              child: Container(
+                decoration: const BoxDecoration(
+                    shape: BoxShape.circle, color: ColorName.primaryColor),
+                child: const Icon(
+                  Icons.add,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _bottomNavigationItem(
+      {required String iconFileName,
+      required String activeIconFileName,
+      required String label,
+      required bool isCurrentItem,
+      required int selectedScreenIndex}) {
+    return Expanded(
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _screensHistory.add(_currentScreenIndex);
+            _currentScreenIndex = selectedScreenIndex;
+          });
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              iconFileName,
+              width: 24,
+              height: 24,
+            ),
+            const SizedBox(
+              height: 4,
+            ),
+            Text(
+              label,
+              style: isCurrentItem
+                  ? lightTheme.textTheme.caption!
+                      .apply(color: lightTheme.colorScheme.primary)
+                  : lightTheme.textTheme.caption,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

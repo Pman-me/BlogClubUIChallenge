@@ -1,11 +1,10 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
 import 'package:blog_club/src/data/local/data_source/app_data_source.dart';
 import 'package:blog_club/src/data/model/article_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'article_event.dart';
 
@@ -18,6 +17,7 @@ class ArticleBloc extends Bloc<ArticleEvent, ArticleState> {
       : _appDataSource = appDataSource,
         super(ArticleLoading()) {
     on<ArticleStarted>(_onStarted);
+    on<ArticleScrolled>(_onScrolled);
     on<ArticleNavigateToBack>(_onNavigateToBack);
   }
 
@@ -26,7 +26,9 @@ class ArticleBloc extends Bloc<ArticleEvent, ArticleState> {
     emit(ArticleSuccess(article: _appDataSource.article));
   }
 
-  _onNavigateToBack(ArticleNavigateToBack event, Emitter<ArticleState> emit) {
-    GoRouter.of(event.context).pop();
+  _onScrolled(ArticleScrolled event, Emitter<ArticleState> emit) {
+    emit((state as ArticleSuccess).copyWith(isScrolled: event.isScrolled));
   }
+
+  _onNavigateToBack(ArticleNavigateToBack event, Emitter<ArticleState> emit) {}
 }

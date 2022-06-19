@@ -11,7 +11,7 @@ class SplashView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (context) =>
-            SplashBloc()..add(NavigateToEvent(context: context)),
+        RepositoryProvider.of<SplashBloc>(context)..add(NavigateToEvent(context: context)),
         child: Scaffold(
           body: _splashBody(),
         ));

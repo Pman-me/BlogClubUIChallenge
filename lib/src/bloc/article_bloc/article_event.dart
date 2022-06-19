@@ -14,3 +14,15 @@ class ArticleNavigateToBack extends ArticleEvent{
 
   ArticleNavigateToBack({required this.context});
 }
+
+class ArticleScrolled extends ArticleEvent {
+
+  bool _isScrolled;
+  bool get isScrolled => _isScrolled;
+
+  ArticleScrolled({required bool isScrolled}):_isScrolled = isScrolled;
+
+  @override
+  List<Object> get props=> [_isScrolled];
+
+}

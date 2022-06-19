@@ -49,6 +49,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   _onNavigateTo(HomeNavigateTo event, Emitter<HomeState> emit) {
-    Navigator.of(event.context).push(MaterialPageRoute(builder: (settings)=>ArticleView()));
+    Navigator.of(event.context).push(
+      AppRoutes.generateRoute(
+        RouteSettings(
+          name: AppRoutes.kArticleScreenRoute,
+        ),
+      ),
+    );
   }
 }

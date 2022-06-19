@@ -4,10 +4,13 @@ import 'package:blog_club/src/bloc/auth_bloc/auth_bloc.dart';
 import 'package:blog_club/src/bloc/auth_bloc/auth_event.dart';
 import 'package:blog_club/src/bloc/auth_bloc/auth_state.dart';
 import 'package:blog_club/src/configs/app_theme.dart';
+import 'package:blog_club/src/core/constants/general_constants.dart';
 import 'package:blog_club/src/core/util/validators.dart';
 import 'package:blog_club/src/view/components/button_component.dart';
+import 'package:blog_club/src/view/screens/auth_screen/widgets/auth_text_field.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -42,7 +45,7 @@ class _AuthViewState extends State<AuthView> {
   Widget build(BuildContext context) {
     var _size = MediaQuery.of(context).size;
     return BlocProvider(
-      create: (context) => AuthBloc(),
+      create: (context) => RepositoryProvider.of<AuthBloc>(context),
       child: Scaffold(
         body: _authBody(context, _size),
       ),
@@ -107,11 +110,11 @@ class _AuthViewState extends State<AuthView> {
 
   Widget _logoWidget(BuildContext context) {
     return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.2,
-          child: SvgPicture.asset(
-            Assets.img.icons.logo.path,
-          ),
-        );
+      height: MediaQuery.of(context).size.height * 0.2,
+      child: SvgPicture.asset(
+        Assets.img.icons.logo.path,
+      ),
+    );
   }
 
   Widget _authModesButtons(BuildContext context, AuthState state) {
@@ -248,7 +251,7 @@ class _AuthViewState extends State<AuthView> {
           child: Text.rich(
             TextSpan(text: 'Forget your password?', children: [
               TextSpan(
-                text: '\t\t\t Reset here',
+                text: ' Reset here',
                 style: TextStyle(
                     color: lightTheme.colorScheme.primary,
                     fontWeight: FontWeight.bold),
@@ -292,14 +295,18 @@ class _AuthViewState extends State<AuthView> {
       ),
       child: state.isLoading
           ? Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                 SizedBox(
+                SizedBox(
                   width: 24,
                   height: 24,
-                  child:  CircularProgressIndicator(color: lightTheme.colorScheme.onPrimary,),
+                  child: CircularProgressIndicator(
+                    color: lightTheme.colorScheme.onPrimary,
+                  ),
                 ),
-                const SizedBox(width: 16,),
+                const SizedBox(
+                  width: 16,
+                ),
                 Text((state.authMode == AuthMode.login ? 'log in' : 'sign up')
                     .toUpperCase())
               ],
@@ -319,11 +326,13 @@ class _AuthViewState extends State<AuthView> {
   }
 
   Widget _usernameTextField(BuildContext context) {
-    return TextFormField(
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+    return AuthTextField(
+      inputFormatters: [
+        FilteringTextInputFormatter.deny(spaceRegex),
+      ],
       validator: emailValidator,
       focusNode: _usernameFocus,
-      keyboardType:TextInputType.emailAddress,
+      keyboardType: TextInputType.emailAddress,
       controller: _userNameController,
       onEditingComplete: () {
         _usernameFocus.unfocus();
@@ -333,31 +342,27 @@ class _AuthViewState extends State<AuthView> {
         _usernameFocus.unfocus();
         FocusScope.of(context).requestFocus(_passwordFocus);
       },
-      decoration: const InputDecoration(
-        label: Text('Username'),
-      ),
+      label: 'Username',
     );
   }
 
   Widget _passwordTextField(BuildContext context, AuthState state) {
-    return TextFormField(
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      keyboardType:TextInputType.visiblePassword,
+    return AuthTextField(
       validator: passwordValidator,
       controller: _passwordController,
-      decoration: InputDecoration(
-          label: const Text('Password'),
-          suffixIcon: TextButton(
-            onPressed: () {
-              context
-                  .read<AuthBloc>()
-                  .add(AuthObscurePassword(isObscure: state.isObscure));
-            },
-            child: state.isObscure ? Text('Show') : Text('Hide'),
-          )),
+      keyboardType: TextInputType.visiblePassword,
+      label: 'password',
+      suffixIcon: TextButton(
+        onPressed: () {
+          context
+              .read<AuthBloc>()
+              .add(AuthObscurePassword(isObscure: state.isObscure));
+        },
+        child: state.isObscure ? Text('Show') : Text('Hide'),
+      ),
+      obscureText: state.isObscure,
       autocorrect: false,
       enableSuggestions: false,
-      obscureText: state.isObscure,
     );
   }
 

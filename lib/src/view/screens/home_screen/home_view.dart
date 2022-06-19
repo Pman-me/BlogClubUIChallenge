@@ -5,7 +5,6 @@ import 'package:blog_club/src/bloc/home_bloc/home_state.dart';
 import 'package:blog_club/src/carousel_slider/carousel_slider.dart';
 import 'package:blog_club/src/core/constants/asset_constants.dart';
 import 'package:blog_club/src/configs/app_theme.dart';
-import 'package:blog_club/src/data/local/data_source/app_data_source.dart';
 import 'package:blog_club/src/data/model/story_model.dart';
 import 'package:blog_club/src/view/components/image_component.dart';
 import 'package:blog_club/src/view/components/post_list_shimmer_component.dart';
@@ -25,8 +24,27 @@ class HomeView extends StatelessWidget {
     return Scaffold(
       body: BlocProvider(
         create: (context) =>
-            HomeBloc(appDatasource: RepositoryProvider.of<AppDatasource>(context))..add(HomeStarted()),
+        RepositoryProvider.of<HomeBloc>(context)..add(HomeStarted()),
         child: _homeBody(),
+      ),
+    );
+  }
+  Widget _appbar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Hi, jonathan!',
+            style: lightTheme.textTheme.subtitle1,
+          ),
+          Image.asset(
+            kHomeAppbarIconAsset,
+            width: 32,
+            height: 32,
+          ),
+        ],
       ),
     );
   }
@@ -82,25 +100,6 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _appbar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Hi, jonathan!',
-            style: lightTheme.textTheme.subtitle1,
-          ),
-          Image.asset(
-            kHomeAppbarIconAsset,
-            width: 32,
-            height: 32,
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _StoryList extends StatelessWidget {
@@ -251,7 +250,7 @@ class _CategoryList extends StatelessWidget {
         builder: (context, state) {
           late Widget result;
           if (state.status == HomeStatus.loading) {
-            result = _categoryListLoadingStateView();
+            result = _categoryListLoadingState();
           }
           if (state.status == HomeStatus.success) {
             result = _categoryListSuccessState(context, state, _currentIndex);
@@ -347,19 +346,19 @@ class _CategoryList extends StatelessWidget {
     );
   }
 
-  Widget _categoryListLoadingStateView() {
+  Widget _categoryListLoadingState() {
     return Container(
       margin: const EdgeInsets.fromLTRB(32, 32, 32, 16),
       child: const ShimmerComponent.rectangular(
         width: double.maxFinite,
-        height: 415,
+        height: 300,
       ),
     );
   }
 }
 
 class _PostList extends StatelessWidget {
-  const _PostList({
+  _PostList({
     Key? key,
   }) : super(key: key);
 
